@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  db:
+    build:
+      context: ./mysql
+    container_name: db
+    restart: always
+    tty: true
+    volumes:
+      - ./mysql/volume:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - node_network
+
+  node:
+    container_name: node
+    restart: always
+    depends_on:
+      - db
+    build:
+      context: ./node
+    networks:
+      - node_network
+      
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - 8080:80
+    depends_on:
+      - node
+      - db
+    networks:
+      - node_network
+
+networks:
+  node_network:
