@@ -16,6 +16,7 @@ services:
 
   node:
     container_name: node
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 60s docker-entrypoint.sh node index.js
     restart: always
     depends_on:
       - db
